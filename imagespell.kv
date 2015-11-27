@@ -1,0 +1,129 @@
+<RootWidget>:
+	orientation: 'vertical'
+	ActionBarWidget:
+	BoxLayout:
+		BoxLayout:
+			canvas.before:
+				Color:
+					rgba: .05, .05, .05, 1
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			orientation: 'vertical'
+			size_hint_x: .2
+			MenuWidget:
+				canvas.before:
+					Color:
+						rgba: 1, 1, 1, .1
+					Rectangle:
+						pos: self.pos
+						size: self.size
+				size_hint_y: .5
+			BoxLayout:
+				size_hint_y: .5
+		QuadImageWidget:
+			size_hint_x: .8
+
+<ActionBarWidget>:
+	pos_hint: {'top': 1}
+	ActionView:
+		use_separator: True
+		ActionPrevious:
+			title: 'ImageSpell'
+			with_previous: False
+		ActionGroup:
+			text: 'Image'
+			mode: 'spinner'
+			size_hint_x: None
+			width: 90
+			ActionButton:
+				text: 'Open'
+			ActionButton:
+				text: 'Save'
+
+<MenuWidget>:
+	size: self.size
+	GridLayout:
+		cols: 1
+		size_hint_y: None
+		Button:
+			text: 'Rotate'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Resize'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Sampling'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Quantization'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Histogram Equalization'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Mask'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Filter'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Edge Detection'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Colormap'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Segmentation'
+			size_hint: 1, None
+			height: 30
+		Button:
+			text: 'Morfologi'
+			size_hint: 1, None
+			height: 30
+
+<QuadImageWidget>:
+	canvas.after:
+		Color:
+			rgba: .05, .05, .05, 1
+		Line:
+			points: self.x+1, self.y+self.height/2, self.x+self.width, self.y+self.height/2
+			width: 2
+		Line:
+			points: self.x+self.width/2, self.y, self.x+self.width/2, self.y+self.height
+			width: 2
+	orientation: 'vertical'
+	BoxLayout:
+		size_hint_y: .5
+		Image:
+			id: top_left_image
+			size_hint_x: .5
+			allow_stretch: True
+			size: self.texture_size
+			source: 'image.jpg'
+		Image:
+			id: top_right_image
+			size_hint_x: .5
+			allow_stretch: True
+			source: 'image.jpg'
+	BoxLayout:
+		size_hint_y: .5
+		Image:
+			id: bottom_left_image
+			size_hint_x: .5
+			allow_stretch: True
+			source: 'image.jpg'
+		Image:
+			id: bottom_right_image
+			size_hint_x: .5
+			allow_stretch: True
+			source: 'image.jpg'
