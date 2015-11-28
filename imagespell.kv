@@ -1,6 +1,7 @@
-<RootWidget>:
+Root:
 	orientation: 'vertical'
 	ActionBarWidget:
+		id: actionbar
 	BoxLayout:
 		BoxLayout:
 			canvas.before:
@@ -22,6 +23,7 @@
 			BoxLayout:
 				size_hint_y: .5
 		QuadImageWidget:
+			id: quad_display
 			size_hint_x: .8
 
 <ActionBarWidget>:
@@ -38,8 +40,10 @@
 			width: 90
 			ActionButton:
 				text: 'Open'
+				on_release: root.parent.show_load()
 			ActionButton:
 				text: 'Save'
+				on_release: root.parent.show_save()
 
 <MenuWidget>:
 	size: self.size
@@ -127,3 +131,46 @@
 			size_hint_x: .5
 			allow_stretch: True
 			source: 'image.jpg'
+
+<LoadDialog>:
+	BoxLayout:
+		size: root.size
+		pos: root.pos
+		orientation: "vertical"
+		FileChooserIconView:
+			id: filechooser
+
+		BoxLayout:
+			size_hint_y: None
+			height: 30
+			Button:
+				text: "Cancel"
+				on_release: root.cancel()
+
+			Button:
+				text: "Load"
+				on_release: root.load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+	text_input: text_input
+	BoxLayout:
+		size: root.size
+		pos: root.pos
+		orientation: 'vertical'
+		FileChooserThumbView:
+			id: filechooser
+			on_selection: text_input.text = self.selection and self.selection[0] or ''
+		TextInput:
+			id: text_input
+			size_hint_y: None
+			height: 30
+			multiline: False
+		BoxLayout:
+			size_hint_y: None
+			height: 30
+			Button:
+				text: 'Cancel'
+				on_release: root.cancel()
+			Button:
+				text: 'Save'
+				on_release: root.save(filechooser.path, text_input.text)
