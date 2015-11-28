@@ -87,9 +87,9 @@ class Root(BoxLayout):
 		self._popup.open()
 
 	def load(self, path, filename):
-		img = cv2.imread(filename[0])
-		original = SpellBase.to_kivy_texture(img)
-		red, green, blue = RGB().process(img)
+		self.cv_image = cv2.imread(filename[0])
+		original = SpellBase.to_kivy_texture(self.cv_image)
+		red, green, blue = RGB().process(self.cv_image)
 		self.display_quad(('Original', original), ('Red', red), ('Green', green), ('Blue', blue))
 		self.dismiss_popup()
 
