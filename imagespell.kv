@@ -13,14 +13,10 @@ Root:
 			orientation: 'vertical'
 			size_hint_x: .2
 			MenuWidget:
-				canvas.before:
-					Color:
-						rgba: 1, 1, 1, .1
-					Rectangle:
-						pos: self.pos
-						size: self.size
 				size_hint_y: .5
-			BoxLayout:
+			Splitter:
+				id: properties
+				sizable_from: 'top'
 				size_hint_y: .5
 		BoxLayout:
 			id: viewport
@@ -49,10 +45,10 @@ Root:
 				on_release: root.parent.show_save()
 
 <MenuWidget>:
-	size: self.size
 	GridLayout:
 		cols: 1
 		size_hint_y: None
+		height: 330
 		Button:
 			text: 'Rotate'
 			size_hint: 1, None
@@ -98,6 +94,25 @@ Root:
 			text: 'Morfologi'
 			size_hint: 1, None
 			height: 30
+
+<RotatePropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Rotation'
+	Slider:
+		id: rotation
+		min: 0
+		max: 360
+		on_value: root.parent.parent.parent.parent.on_rotate_update()
 
 <SingleDisplayWidget>:
 	RelativeLayout:

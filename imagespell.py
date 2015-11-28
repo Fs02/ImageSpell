@@ -6,6 +6,7 @@ from kivy.uix.actionbar import ActionBar
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
@@ -19,6 +20,9 @@ class ActionBarWidget(ActionBar):
 	pass
 
 class MenuWidget(ScrollView):
+	pass
+
+class RotatePropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -58,8 +62,12 @@ class Root(BoxLayout):
 	def __init__(self, **kwargs):
 		super(Root, self).__init__(**kwargs)
 
+		# viewport widget
 		self.single_display = SingleDisplayWidget()
 		self.quad_display = QuadDisplayWidget()
+
+		# property widget
+		self.rotate_properties = RotatePropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -76,7 +84,14 @@ class Root(BoxLayout):
 	def on_rotate(self):
 		if not hasattr(self, 'cv_image'):
 			return
-		self.display_single(("Rotated 90", Rotate().process(self.cv_image, 75)))
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.rotate_properties)
+		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+
+	def on_rotate_update(self):
+		rotation = self.rotate_properties.ids.rotation.value
+		self.display_single((str(rotation) + " Degrees", Rotate().process(self.cv_image, rotation)))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()
