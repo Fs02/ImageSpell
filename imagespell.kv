@@ -22,7 +22,7 @@ Root:
 				size_hint_y: .5
 			BoxLayout:
 				size_hint_y: .5
-		QuadImageWidget:
+		QuadDisplayWidget:
 			id: quad_display
 			size_hint_x: .8
 
@@ -95,7 +95,7 @@ Root:
 			size_hint: 1, None
 			height: 30
 
-<QuadImageWidget>:
+<QuadDisplayWidget>:
 	canvas.after:
 		Color:
 			rgba: .05, .05, .05, 1
@@ -108,29 +108,84 @@ Root:
 	orientation: 'vertical'
 	BoxLayout:
 		size_hint_y: .5
-		Image:
-			id: top_left_image
+		RelativeLayout:
 			size_hint_x: .5
-			allow_stretch: True
-			size: self.texture_size
-			source: 'image.jpg'
-		Image:
-			id: top_right_image
+			Image:
+				id: top_left_image
+				allow_stretch: True
+				source: 'empty.png'
+			Label:
+				id: top_left_label
+				halign: 'right'
+				valign: 'top'
+				text_size: self.size
+				padding: 5, 1
+				text: 'top left'
+			Label:
+				halign: 'left'
+				valign: 'bottom'
+				text_size: self.size
+				padding: 5, 1
+				text: "1 : " + ("%.2f" % (top_left_image.texture_size[0]/top_left_image.width))
+		RelativeLayout:
 			size_hint_x: .5
-			allow_stretch: True
-			source: 'image.jpg'
+			Image:
+				id: top_right_image
+				allow_stretch: True
+				source: 'empty.png'
+			Label:
+				id: top_right_label
+				halign: 'right'
+				valign: 'top'
+				text_size: self.size
+				padding: 5, 1
+				text: 'top right'
+			Label:
+				halign: 'left'
+				valign: 'bottom'
+				text_size: self.size
+				padding: 5, 1
+				text: "1 : " + ("%.2f" % (top_right_image.texture_size[0]/top_right_image.width))
 	BoxLayout:
 		size_hint_y: .5
-		Image:
-			id: bottom_left_image
+		RelativeLayout:
 			size_hint_x: .5
-			allow_stretch: True
-			source: 'image.jpg'
-		Image:
-			id: bottom_right_image
+			Image:
+				id: bottom_left_image
+				allow_stretch: True
+				source: 'empty.png'
+			Label:
+				id: bottom_left_label
+				halign: 'right'
+				valign: 'top'
+				text_size: self.size
+				padding: 5, 1
+				text: 'bottom left'
+			Label:
+				halign: 'left'
+				valign: 'bottom'
+				text_size: self.size
+				padding: 5, 1
+				text: "1 : " + ("%.2f" % (bottom_left_image.texture_size[0]/bottom_left_image.width))
+		RelativeLayout:
 			size_hint_x: .5
-			allow_stretch: True
-			source: 'image.jpg'
+			Image:
+				id: bottom_right_image
+				allow_stretch: True
+				source: 'empty.png'
+			Label:
+				id: bottom_right_label
+				halign: 'right'
+				valign: 'top'
+				text_size: self.size
+				padding: 5, 1
+				text: 'bottom right'
+			Label:
+				halign: 'left'
+				valign: 'bottom'
+				text_size: self.size
+				padding: 5, 1
+				text: "1 : " + ("%.2f" % (bottom_right_image.texture_size[0]/bottom_right_image.width))
 
 <LoadDialog>:
 	BoxLayout:

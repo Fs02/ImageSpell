@@ -20,12 +20,19 @@ class ActionBarWidget(ActionBar):
 class MenuWidget(ScrollView):
 	pass
 
-class QuadImageWidget(BoxLayout):
+class QuadDisplayWidget(BoxLayout):
 	def update_display(self, top_left, top_right, bottom_left, bottom_right):
-		self.ids.top_left_image.texture = top_left
-		self.ids.top_right_image.texture = top_right
-		self.ids.bottom_left_image.texture = bottom_left
-		self.ids.bottom_right_image.texture = bottom_right
+		self.ids.top_left_label.text = top_left[0]
+		self.ids.top_left_image.texture = top_left[1]
+
+		self.ids.top_right_label.text = top_right[0]
+		self.ids.top_right_image.texture = top_right[1]
+
+		self.ids.bottom_left_label.text = bottom_left[0]
+		self.ids.bottom_left_image.texture = bottom_left[1]
+
+		self.ids.bottom_right_label.text = bottom_right[0]
+		self.ids.bottom_right_image.texture = bottom_right[1]
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -60,7 +67,7 @@ class Root(BoxLayout):
 		img = cv2.imread(filename[0])
 		original = SpellBase.to_kivy_texture(img)
 		red, green, blue = RGB().process(img)
-		self.ids.quad_display.update_display(original, red, green, blue)
+		self.ids.quad_display.update_display(('Original', original), ('Red', red), ('Green', green), ('Blue', blue))
 		self.dismiss_popup()
 
 	def save(self, path, filename):
