@@ -20,6 +20,11 @@ class ActionBarWidget(ActionBar):
 class MenuWidget(ScrollView):
 	pass
 
+class SingleDisplayWidget(BoxLayout):
+	def update_display(self, image):
+		self.ids.top_left_label.text = top_left[0]
+		self.ids.top_left_image.texture = top_left[1]
+
 class QuadDisplayWidget(BoxLayout):
 	def update_display(self, top_left, top_right, bottom_left, bottom_right):
 		self.ids.top_left_label.text = top_left[0]

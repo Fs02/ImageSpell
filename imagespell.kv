@@ -95,6 +95,27 @@ Root:
 			size_hint: 1, None
 			height: 30
 
+<SingleDisplayWidget>:
+	RelativeLayout:
+		Image:
+			id: image
+			allow_stretch: True
+			source: 'empty.png'
+		Label:
+			id: label
+			halign: 'right'
+			valign: 'top'
+			text_size: self.size
+			padding: 5, 1
+			text: 'blank'
+		Label:
+			halign: 'left'
+			valign: 'bottom'
+			text_size: self.size
+			padding: 5, 1
+			text: "1 : " + ("%.2f" % (image.texture_size[0]/image.width))
+
+
 <QuadDisplayWidget>:
 	canvas.after:
 		Color:
