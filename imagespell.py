@@ -10,11 +10,24 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
+from kivy.uix.textinput import TextInput
 
+import re
 import cv2
 from spells.spellbase import SpellBase
 from spells.rgb import RGB
 from spells.rotate import Rotate
+from spells.resize import Resize
+
+class FloatInput(TextInput):
+    pat = re.compile('[^0-9]')
+    def insert_text(self, substring, from_undo=False):
+        pat = self.pat
+        if '.' in self.text:
+            s = re.sub(pat, '', substring)
+        else:
+            s = '.'.join([re.sub(pat, '', s) for s in substring.split('.', 1)])
+        return super(FloatInput, self).insert_text(s, from_undo=from_undo)
 
 class ActionBarWidget(ActionBar):
 	pass
@@ -23,6 +36,9 @@ class MenuWidget(ScrollView):
 	pass
 
 class RotatePropertyWidget(GridLayout):
+	pass
+
+class ResizePropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -68,6 +84,7 @@ class Root(BoxLayout):
 
 		# property widget
 		self.rotate_properties = RotatePropertyWidget()
+		self.resize_properties = ResizePropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -86,12 +103,29 @@ class Root(BoxLayout):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
+		self.rotate_properties.ids.rotation.value = 0
 		self.ids.properties.add_widget(self.rotate_properties)
 		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_rotate_update(self):
 		rotation = self.rotate_properties.ids.rotation.value
 		self.display_single((str(rotation) + " Degrees", Rotate().process(self.cv_image, rotation)))
+
+	def on_resize(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.resize_properties.ids.width_scale.text = '1'
+		self.resize_properties.ids.height_scale.text = '1'
+		self.ids.properties.add_widget(self.resize_properties)
+		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+
+	def on_resize_update(self):
+		width_scale =  float(self.resize_properties.ids.width_scale.text) if self.resize_properties.ids.width_scale.text != '' else 1
+		height_scale = float(self.resize_properties.ids.height_scale.text) if self.resize_properties.ids.height_scale.text != '' else 1
+
+		self.display_single(("Scaled", Resize().process(self.cv_image, (width_scale, height_scale))))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()

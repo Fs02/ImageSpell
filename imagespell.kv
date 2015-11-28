@@ -58,6 +58,7 @@ Root:
 			text: 'Resize'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_resize()
 		Button:
 			text: 'Sampling'
 			size_hint: 1, None
@@ -112,7 +113,37 @@ Root:
 		id: rotation
 		min: 0
 		max: 360
-		on_value: root.parent.parent.parent.parent.on_rotate_update()
+		on_value:  if not(root.parent is None): root.parent.parent.parent.parent.on_rotate_update()
+
+<ResizePropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Width Scale'
+	FloatInput:
+		id: width_scale
+		text: '1'
+		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_resize_update()
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Height Scale'
+	FloatInput:
+		id: height_scale
+		text: '1'
+		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_resize_update()
 
 <SingleDisplayWidget>:
 	RelativeLayout:
