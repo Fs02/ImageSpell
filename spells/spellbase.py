@@ -1,10 +1,12 @@
 import cv2
+from kivy.graphics.texture import Texture
 
-class Base
+class SpellBase(object):
     @staticmethod
-    def to_kivy_texture(self, cv_image):
-		buf = image.tostring()
-		texture = Texture.create(size=(image.shape[1], image.shape[0]), colorfmt='bgr')
+    def to_kivy_texture(cv_image):
+        flipped = cv2.flip(cv_image, 0)
+        buf = flipped.tostring()
+        texture = Texture.create(size=(cv_image.shape[1], cv_image.shape[0]), colorfmt='bgr')
         texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
         return texture
 

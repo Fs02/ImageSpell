@@ -9,8 +9,10 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.factory import Factory
 from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
-from kivy.graphics.texture import Texture
+
 import cv2
+from spells.spellbase import SpellBase
+from spells.rgb import RGB
 
 class ActionBarWidget(ActionBar):
 	pass
@@ -19,7 +21,11 @@ class MenuWidget(ScrollView):
 	pass
 
 class QuadImageWidget(BoxLayout):
-	pass
+	def update_display(self, top_left, top_right, bottom_left, bottom_right):
+		self.ids.top_left_image.texture = top_left
+		self.ids.top_right_image.texture = top_right
+		self.ids.bottom_left_image.texture = bottom_left
+		self.ids.bottom_right_image.texture = bottom_right
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -52,10 +58,9 @@ class Root(BoxLayout):
 
 	def load(self, path, filename):
 		img = cv2.imread(filename[0])
-		buf = img.tostring()
-		texture = Texture.create(size=(img.shape[1], img.shape[0]), colorfmt='bgr')
-		texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-		self.ids.quad_display.ids.top_left_image.texture = texture
+		original = SpellBase.to_kivy_texture(img)
+		red, green, blue = RGB().process(img)
+		self.ids.quad_display.update_display(original, red, green, blue)
 		self.dismiss_popup()
 
 	def save(self, path, filename):
