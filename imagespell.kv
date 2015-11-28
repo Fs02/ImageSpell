@@ -22,9 +22,12 @@ Root:
 				size_hint_y: .5
 			BoxLayout:
 				size_hint_y: .5
-		QuadDisplayWidget:
-			id: quad_display
+		BoxLayout:
+			id: viewport
 			size_hint_x: .8
+			Label:
+				text: 'Welcome to ImageSpell !'
+				font_size: 30
 
 <ActionBarWidget>:
 	pos_hint: {'top': 1}
@@ -97,9 +100,9 @@ Root:
 
 <SingleDisplayWidget>:
 	RelativeLayout:
+		size_hint: 1, 1
 		Image:
 			id: image
-			allow_stretch: True
 			source: 'empty.png'
 		Label:
 			id: label
@@ -113,7 +116,7 @@ Root:
 			valign: 'bottom'
 			text_size: self.size
 			padding: 5, 1
-			text: "1 : " + ("%.2f" % (image.texture_size[0]/image.width))
+			text: "1 : " + ("%.2f" % max(1, image.texture_size[0]/image.width))
 
 
 <QuadDisplayWidget>:
@@ -147,7 +150,7 @@ Root:
 				valign: 'bottom'
 				text_size: self.size
 				padding: 5, 1
-				text: "1 : " + ("%.2f" % (top_left_image.texture_size[0]/top_left_image.width))
+				text: "1 : " + ("%.2f" % max(1, top_left_image.texture_size[0]/top_left_image.width))
 		RelativeLayout:
 			size_hint_x: .5
 			Image:
@@ -166,7 +169,7 @@ Root:
 				valign: 'bottom'
 				text_size: self.size
 				padding: 5, 1
-				text: "1 : " + ("%.2f" % (top_right_image.texture_size[0]/top_right_image.width))
+				text: "1 : " + ("%.2f" % max(1, top_right_image.texture_size[0]/top_right_image.width))
 	BoxLayout:
 		size_hint_y: .5
 		RelativeLayout:
@@ -187,7 +190,7 @@ Root:
 				valign: 'bottom'
 				text_size: self.size
 				padding: 5, 1
-				text: "1 : " + ("%.2f" % (bottom_left_image.texture_size[0]/bottom_left_image.width))
+				text: "1 : " + ("%.2f" % max(1, bottom_left_image.texture_size[0]/bottom_left_image.width))
 		RelativeLayout:
 			size_hint_x: .5
 			Image:
@@ -206,7 +209,7 @@ Root:
 				valign: 'bottom'
 				text_size: self.size
 				padding: 5, 1
-				text: "1 : " + ("%.2f" % (bottom_right_image.texture_size[0]/bottom_right_image.width))
+				text: "1 : " + ("%.2f" % max(1, bottom_right_image.texture_size[0]/bottom_right_image.width))
 
 <LoadDialog>:
 	BoxLayout:

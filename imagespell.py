@@ -22,8 +22,8 @@ class MenuWidget(ScrollView):
 
 class SingleDisplayWidget(BoxLayout):
 	def update_display(self, image):
-		self.ids.top_left_label.text = top_left[0]
-		self.ids.top_left_image.texture = top_left[1]
+		self.ids.label.text = image[0]
+		self.ids.image.texture = image[1]
 
 class QuadDisplayWidget(BoxLayout):
 	def update_display(self, top_left, top_right, bottom_left, bottom_right):
@@ -54,6 +54,24 @@ class Root(BoxLayout):
 	savefile = ObjectProperty(None)
 	text_input = ObjectProperty(None)
 
+	def __init__(self, **kwargs):
+		super(Root, self).__init__(**kwargs)
+
+		self.single_display = SingleDisplayWidget()
+		self.quad_display = QuadDisplayWidget()
+
+	def display_single(self, image):
+		self.single_display.update_display(image)
+		if self.ids.viewport.children[0] != self.single_display:
+			self.ids.viewport.clear_widgets()
+			self.ids.viewport.add_widget(self.single_display)
+
+	def display_quad(self, top_left, top_right, bottom_left, bottom_right):
+		self.quad_display.update_display(top_left, top_right, bottom_left, bottom_right)
+		if self.ids.viewport.children[0] != self.quad_display:
+			self.ids.viewport.clear_widgets()
+			self.ids.viewport.add_widget(self.quad_display)
+
 	def dismiss_popup(self):
 		self._popup.dismiss()
 
@@ -72,7 +90,7 @@ class Root(BoxLayout):
 		img = cv2.imread(filename[0])
 		original = SpellBase.to_kivy_texture(img)
 		red, green, blue = RGB().process(img)
-		self.ids.quad_display.update_display(('Original', original), ('Red', red), ('Green', green), ('Blue', blue))
+		self.display_quad(('Original', original), ('Red', red), ('Green', green), ('Blue', blue))
 		self.dismiss_popup()
 
 	def save(self, path, filename):
