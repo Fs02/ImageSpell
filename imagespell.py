@@ -18,6 +18,14 @@ from spells.spellbase import SpellBase
 from spells.rgb import RGB
 from spells.rotate import Rotate
 from spells.resize import Resize
+from spells.sampling import Sampling
+
+
+class IntInput(TextInput):
+    pat = re.compile('[^0-9]')
+    def insert_text(self, substring, from_undo=False):
+        s = re.sub(self.pat, '', substring)
+        return super(IntInput, self).insert_text(s, from_undo=from_undo)
 
 class FloatInput(TextInput):
     pat = re.compile('[^0-9]')
@@ -39,6 +47,9 @@ class RotatePropertyWidget(GridLayout):
 	pass
 
 class ResizePropertyWidget(GridLayout):
+	pass
+
+class SamplingPropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -85,6 +96,7 @@ class Root(BoxLayout):
 		# property widget
 		self.rotate_properties = RotatePropertyWidget()
 		self.resize_properties = ResizePropertyWidget()
+		self.sampling_properties = SamplingPropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -126,6 +138,20 @@ class Root(BoxLayout):
 		height_scale = float(self.resize_properties.ids.height_scale.text) if self.resize_properties.ids.height_scale.text != '' else 1
 
 		self.display_single(("Scaled", Resize().process(self.cv_image, (width_scale, height_scale))))
+
+	def on_sampling(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.sampling_properties.ids.factor.text = '1'
+		self.ids.properties.add_widget(self.sampling_properties)
+		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+
+	def on_sampling_update(self):
+		factor =  int(self.sampling_properties.ids.factor.text) if self.sampling_properties.ids.factor.text != '' else 1
+
+		self.display_single(("Sampling " + str(factor), Sampling().process(self.cv_image, factor)))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()
