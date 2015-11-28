@@ -13,6 +13,7 @@ from kivy.uix.popup import Popup
 import cv2
 from spells.spellbase import SpellBase
 from spells.rgb import RGB
+from spells.rotate import Rotate
 
 class ActionBarWidget(ActionBar):
 	pass
@@ -71,6 +72,11 @@ class Root(BoxLayout):
 		if self.ids.viewport.children[0] != self.quad_display:
 			self.ids.viewport.clear_widgets()
 			self.ids.viewport.add_widget(self.quad_display)
+
+	def on_rotate(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		self.display_single(("Rotated 90", Rotate().process(self.cv_image, 75)))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()
