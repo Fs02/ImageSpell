@@ -21,6 +21,7 @@ from spells.resize import Resize
 from spells.flip import Flip
 from spells.sampling import Sampling
 from spells.quantization import Quantization
+from spells.equalizehist import EqualizeHist
 
 
 class IntInput(TextInput):
@@ -58,6 +59,9 @@ class SamplingPropertyWidget(GridLayout):
 	pass
 
 class QuantizationPropertyWidget(GridLayout):
+	pass
+
+class EqualizeHistPropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -107,6 +111,7 @@ class Root(BoxLayout):
 		self.flip_properties = FlipPropertyWidget()
 		self.sampling_properties = SamplingPropertyWidget()
 		self.quantization_properties = QuantizationPropertyWidget()
+		self.equalizehist_properties = EqualizeHistPropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -191,6 +196,14 @@ class Root(BoxLayout):
 		K =  int(self.quantization_properties.ids.factor.text) if self.quantization_properties.ids.factor.text != '' else 1
 
 		self.display_single(("K = " + str(K), Quantization().process(self.cv_image, K)))
+
+	def on_equalizehist(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.equalizehist_properties)
+		self.display_single(('Equalized Histogram', EqualizeHist().process(self.cv_image)))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()
