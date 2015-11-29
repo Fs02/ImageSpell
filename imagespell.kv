@@ -63,6 +63,7 @@ Root:
 			text: 'Flip'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_flip()
 		Button:
 			text: 'Sampling'
 			size_hint: 1, None
@@ -155,6 +156,34 @@ Root:
 		text: '1'
 		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_resize_update()
 
+<FlipPropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Horizontal'
+	Switch:
+		id: horizontal
+		on_active: if not(root.parent is None): root.parent.parent.parent.parent.on_flip_update()
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Vertical'
+	Switch:
+		id: vertical
+		on_active: if not(root.parent is None): root.parent.parent.parent.parent.on_flip_update()
+
 <SamplingPropertyWidget>:
 	cols: 1
 	row_default_height: 30
@@ -172,7 +201,6 @@ Root:
 		id: factor
 		text: '1'
 		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_sampling_update()
-
 
 <QuantizationPropertyWidget>:
 	cols: 1

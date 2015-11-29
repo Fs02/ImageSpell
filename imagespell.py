@@ -18,6 +18,7 @@ from spells.spellbase import SpellBase
 from spells.rgb import RGB
 from spells.rotate import Rotate
 from spells.resize import Resize
+from spells.flip import Flip
 from spells.sampling import Sampling
 from spells.quantization import Quantization
 
@@ -48,6 +49,9 @@ class RotatePropertyWidget(GridLayout):
 	pass
 
 class ResizePropertyWidget(GridLayout):
+	pass
+
+class FlipPropertyWidget(GridLayout):
 	pass
 
 class SamplingPropertyWidget(GridLayout):
@@ -100,6 +104,7 @@ class Root(BoxLayout):
 		# property widget
 		self.rotate_properties = RotatePropertyWidget()
 		self.resize_properties = ResizePropertyWidget()
+		self.flip_properties = FlipPropertyWidget()
 		self.sampling_properties = SamplingPropertyWidget()
 		self.quantization_properties = QuantizationPropertyWidget()
 
@@ -143,6 +148,22 @@ class Root(BoxLayout):
 		height_scale = float(self.resize_properties.ids.height_scale.text) if self.resize_properties.ids.height_scale.text != '' else 1
 
 		self.display_single(("Scaled", Resize().process(self.cv_image, (width_scale, height_scale))))
+
+	def on_flip(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.flip_properties.ids.horizontal.active = False
+		self.flip_properties.ids.vertical.active = False
+		self.ids.properties.add_widget(self.flip_properties)
+		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+
+	def on_flip_update(self):
+		horizontal = self.flip_properties.ids.horizontal.active
+		vertical = self.flip_properties.ids.vertical.active
+
+		self.display_single(("Flipped", Flip().process(self.cv_image, horizontal, vertical)))
 
 	def on_sampling(self):
 		if not hasattr(self, 'cv_image'):
