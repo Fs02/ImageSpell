@@ -23,6 +23,7 @@ from spells.sampling import Sampling
 from spells.quantization import Quantization
 from spells.equalizehist import EqualizeHist
 from spells.segmentation import Segmentation
+from spells.colormap import Colormap
 
 
 class IntInput(TextInput):
@@ -63,6 +64,9 @@ class QuantizationPropertyWidget(GridLayout):
 	pass
 
 class EqualizeHistPropertyWidget(GridLayout):
+	pass
+
+class ColormapPropertyWidget(GridLayout):
 	pass
 
 class SegmentationPropertyWidget(GridLayout):
@@ -116,6 +120,7 @@ class Root(BoxLayout):
 		self.sampling_properties = SamplingPropertyWidget()
 		self.quantization_properties = QuantizationPropertyWidget()
 		self.equalizehist_properties = EqualizeHistPropertyWidget()
+		self.colormap_properties = ColormapPropertyWidget()
 		self.segmentation_properties = SegmentationPropertyWidget()
 
 	def display_single(self, image):
@@ -211,6 +216,18 @@ class Root(BoxLayout):
 		self.ids.properties.add_widget(self.equalizehist_properties)
 		self.display_single(('Equalized Histogram', EqualizeHist().process(self.cv_image)))
 
+	def on_colormap(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.colormap_properties)
+		self.colormap_properties.ids.map.text = 'Autumn'
+		self.display_single(('Autumn', Colormap().process(self.cv_image)))
+
+	def on_colormap_update(self):
+		colormap = self.colormap_properties.ids.map.text
+		self.display_single((colormap, Colormap().process(self.cv_image, colormap)))
 
 	def on_segmentation(self):
 		if not hasattr(self, 'cv_image'):
@@ -221,6 +238,7 @@ class Root(BoxLayout):
 		self.segmentation_properties.ids.mode.text = 'Distance Transform'
 		opening, unknown, markers, segmented = Segmentation().process(self.cv_image)
 		self.display_quad(('Opening', opening), ('Unknown', unknown), ('Markers', markers), ('Segmented', segmented))
+
 
 	def on_segmentation_update(self):
 		distance_transform = self.segmentation_properties.ids.mode.text != 'Erosion'
