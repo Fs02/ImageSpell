@@ -19,6 +19,7 @@ from spells.rgb import RGB
 from spells.rotate import Rotate
 from spells.resize import Resize
 from spells.sampling import Sampling
+from spells.quantization import Quantization
 
 
 class IntInput(TextInput):
@@ -50,6 +51,9 @@ class ResizePropertyWidget(GridLayout):
 	pass
 
 class SamplingPropertyWidget(GridLayout):
+	pass
+
+class QuantizationPropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -97,6 +101,7 @@ class Root(BoxLayout):
 		self.rotate_properties = RotatePropertyWidget()
 		self.resize_properties = ResizePropertyWidget()
 		self.sampling_properties = SamplingPropertyWidget()
+		self.quantization_properties = QuantizationPropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -152,6 +157,19 @@ class Root(BoxLayout):
 		factor =  int(self.sampling_properties.ids.factor.text) if self.sampling_properties.ids.factor.text != '' else 1
 
 		self.display_single(("Sampling " + str(factor), Sampling().process(self.cv_image, factor)))
+	def on_quantization(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.quantization_properties.ids.factor.text = '1'
+		self.ids.properties.add_widget(self.quantization_properties)
+		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+
+	def on_quantization_update(self):
+		K =  int(self.quantization_properties.ids.factor.text) if self.quantization_properties.ids.factor.text != '' else 1
+
+		self.display_single(("K = " + str(K), Quantization().process(self.cv_image, K)))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()
@@ -168,10 +186,11 @@ class Root(BoxLayout):
 		self._popup.open()
 
 	def load(self, path, filename):
-		self.cv_image = cv2.imread(filename[0])
-		original = SpellBase.to_kivy_texture(self.cv_image)
-		red, green, blue = RGB().process(self.cv_image)
-		self.display_quad(('Original', original), ('Red', red), ('Green', green), ('Blue', blue))
+		if len(filename) > 0:
+			self.cv_image = cv2.imread(filename[0])
+			original = SpellBase.to_kivy_texture(self.cv_image)
+			red, green, blue = RGB().process(self.cv_image)
+			self.display_quad(('Original', original), ('Red', red), ('Green', green), ('Blue', blue))
 		self.dismiss_popup()
 
 	def save(self, path, filename):

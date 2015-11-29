@@ -48,7 +48,7 @@ Root:
 	GridLayout:
 		cols: 1
 		size_hint_y: None
-		height: 330
+		height: 390
 		Button:
 			text: 'Rotate'
 			size_hint: 1, None
@@ -60,14 +60,23 @@ Root:
 			height: 30
 			on_release: root.parent.parent.parent.on_resize()
 		Button:
+			text: 'Flip'
+			size_hint: 1, None
+			height: 30
+		Button:
 			text: 'Sampling'
 			size_hint: 1, None
 			height: 30
 			on_release: root.parent.parent.parent.on_sampling()
 		Button:
+			text: 'Copy & Paste'
+			size_hint: 1, None
+			height: 30
+		Button:
 			text: 'Quantization'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_quantization()
 		Button:
 			text: 'Histogram Equalization'
 			size_hint: 1, None
@@ -163,6 +172,25 @@ Root:
 		id: factor
 		text: '1'
 		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_sampling_update()
+
+
+<QuantizationPropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'K'
+	IntInput:
+		id: factor
+		text: '1'
+		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_quantization_update()
 
 <SingleDisplayWidget>:
 	RelativeLayout:
