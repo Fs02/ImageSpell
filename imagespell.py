@@ -161,7 +161,7 @@ class Root(BoxLayout):
 		self.ids.properties.add_widget(self.resize_properties)
 		self.resize_properties.ids.width_scale.text = '1'
 		self.resize_properties.ids.height_scale.text = '1'
-		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+		self.on_resize_update()
 
 	def on_resize_update(self):
 		width_scale =  float(self.resize_properties.ids.width_scale.text) if self.resize_properties.ids.width_scale.text != '' else 1
@@ -177,7 +177,7 @@ class Root(BoxLayout):
 		self.ids.properties.add_widget(self.flip_properties)
 		self.flip_properties.ids.horizontal.active = False
 		self.flip_properties.ids.vertical.active = False
-		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+		self.on_flip_update()
 
 	def on_flip_update(self):
 		horizontal = self.flip_properties.ids.horizontal.active
@@ -191,8 +191,8 @@ class Root(BoxLayout):
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.sampling_properties)
-		self.sampling_properties.ids.factor.text = '1'
-		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+		self.sampling_properties.ids.factor.text = '5'
+		self.on_sampling_update()
 
 	def on_sampling_update(self):
 		factor =  int(self.sampling_properties.ids.factor.text) if self.sampling_properties.ids.factor.text != '' else 1
@@ -205,8 +205,8 @@ class Root(BoxLayout):
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.quantization_properties)
-		self.quantization_properties.ids.factor.text = '1'
-		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+		self.quantization_properties.ids.factor.text = '10'
+		self.on_quantization_update()
 
 	def on_quantization_update(self):
 		K =  int(self.quantization_properties.ids.factor.text) if self.quantization_properties.ids.factor.text != '' else 1
@@ -228,7 +228,7 @@ class Root(BoxLayout):
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.colormap_properties)
 		self.colormap_properties.ids.map.text = 'Autumn'
-		self.display_single(('Autumn', Colormap().process(self.cv_image)))
+		self.on_colormap_update()
 
 	def on_colormap_update(self):
 		colormap = self.colormap_properties.ids.map.text
@@ -241,9 +241,7 @@ class Root(BoxLayout):
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.segmentation_properties)
 		self.segmentation_properties.ids.mode.text = 'Distance Transform'
-		opening, unknown, markers, segmented = Segmentation().process(self.cv_image)
-		self.display_quad(('Opening', opening), ('Unknown', unknown), ('Markers', markers), ('Segmented', segmented))
-
+		self.on_segmentation_update()
 
 	def on_segmentation_update(self):
 		distance_transform = self.segmentation_properties.ids.mode.text != 'Erosion'
@@ -264,7 +262,7 @@ class Root(BoxLayout):
 	def on_morphology_update(self):
 		operation = self.morphology_properties.ids.operation.text
 		kernel = self.morphology_properties.ids.kernel.text
-		kernel_size = int(self.morphology_properties.ids.kernel_size.text)
+		kernel_size = int(self.morphology_properties.ids.kernel_size.text) if self.morphology_properties.ids.kernel_size.text != '' else 3
 		title = str(kernel_size) + 'x' + str(kernel_size) + ' ' + kernel + ' ' + operation
 		self.display_single((title, Morphology().process(self.cv_image, operation, kernel, kernel_size)))
 
