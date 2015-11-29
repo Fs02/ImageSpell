@@ -22,6 +22,7 @@ from spells.flip import Flip
 from spells.sampling import Sampling
 from spells.quantization import Quantization
 from spells.equalizehist import EqualizeHist
+from spells.segmentation import Segmentation
 
 
 class IntInput(TextInput):
@@ -62,6 +63,9 @@ class QuantizationPropertyWidget(GridLayout):
 	pass
 
 class EqualizeHistPropertyWidget(GridLayout):
+	pass
+
+class SegmentationPropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -112,6 +116,7 @@ class Root(BoxLayout):
 		self.sampling_properties = SamplingPropertyWidget()
 		self.quantization_properties = QuantizationPropertyWidget()
 		self.equalizehist_properties = EqualizeHistPropertyWidget()
+		self.segmentation_properties = SegmentationPropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -130,8 +135,8 @@ class Root(BoxLayout):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
-		self.rotate_properties.ids.rotation.value = 0
 		self.ids.properties.add_widget(self.rotate_properties)
+		self.rotate_properties.ids.rotation.value = 0
 		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_rotate_update(self):
@@ -143,9 +148,9 @@ class Root(BoxLayout):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.resize_properties)
 		self.resize_properties.ids.width_scale.text = '1'
 		self.resize_properties.ids.height_scale.text = '1'
-		self.ids.properties.add_widget(self.resize_properties)
 		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_resize_update(self):
@@ -159,9 +164,9 @@ class Root(BoxLayout):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.flip_properties)
 		self.flip_properties.ids.horizontal.active = False
 		self.flip_properties.ids.vertical.active = False
-		self.ids.properties.add_widget(self.flip_properties)
 		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_flip_update(self):
@@ -175,21 +180,22 @@ class Root(BoxLayout):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
-		self.sampling_properties.ids.factor.text = '1'
 		self.ids.properties.add_widget(self.sampling_properties)
+		self.sampling_properties.ids.factor.text = '1'
 		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_sampling_update(self):
 		factor =  int(self.sampling_properties.ids.factor.text) if self.sampling_properties.ids.factor.text != '' else 1
 
 		self.display_single(("Sampling " + str(factor), Sampling().process(self.cv_image, factor)))
+
 	def on_quantization(self):
 		if not hasattr(self, 'cv_image'):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
-		self.quantization_properties.ids.factor.text = '1'
 		self.ids.properties.add_widget(self.quantization_properties)
+		self.quantization_properties.ids.factor.text = '1'
 		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_quantization_update(self):
@@ -204,6 +210,22 @@ class Root(BoxLayout):
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.equalizehist_properties)
 		self.display_single(('Equalized Histogram', EqualizeHist().process(self.cv_image)))
+
+
+	def on_segmentation(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.segmentation_properties)
+		self.segmentation_properties.ids.mode.text = 'Distance Transform'
+		opening, unknown, markers, segmented = Segmentation().process(self.cv_image)
+		self.display_quad(('Opening', opening), ('Unknown', unknown), ('Markers', markers), ('Segmented', segmented))
+
+	def on_segmentation_update(self):
+		distance_transform = self.segmentation_properties.ids.mode.text != 'Erosion'
+		opening, unknown, markers, segmented = Segmentation().process(self.cv_image, distance_transform)
+		self.display_quad(('Threshold', opening), ('Unknown', unknown), ('Markers', markers), ('Segmented', segmented))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()

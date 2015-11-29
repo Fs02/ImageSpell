@@ -103,6 +103,7 @@ Root:
 			text: 'Segmentation'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_segmentation()
 		Button:
 			text: 'Morfologi'
 			size_hint: 1, None
@@ -220,6 +221,48 @@ Root:
 		id: factor
 		text: '1'
 		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_quantization_update()
+
+<EqualizeHistPropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+
+<SegmentationPropertyWidget>:
+	# trick to not lost the Dropdown instance
+	__safe_id: [dropdown.__self__]
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Foreground area'
+	Button:
+		id: mode
+		text: 'Distance Transform'
+		on_release: dropdown.open(self)
+		size_hint_y: None
+		on_text: root.parent.parent.parent.parent.on_segmentation_update()
+	DropDown:
+		id: dropdown
+		on_parent: self.dismiss()
+		on_select: mode.text = args[1]
+		Button:
+			text: 'Distance Transform'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Erosion'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
 
 <SingleDisplayWidget>:
 	RelativeLayout:
