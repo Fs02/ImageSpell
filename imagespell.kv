@@ -109,6 +109,7 @@ Root:
 			text: 'Morfologi'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_morphology()
 
 <RotatePropertyWidget>:
 	cols: 1
@@ -351,6 +352,120 @@ Root:
 			size_hint_y: None
 			height: 30
 			on_release: dropdown.select(self.text)
+
+<MorphologyPropertyWidget>:
+	# trick to not lost the Dropdown instance
+	__safe_id: [dropdown_operation.__self__, dropdown_kernel.__self__]
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Operation'
+	Button:
+		id: operation
+		text: 'Erosion'
+		on_release: dropdown_operation.open(self)
+		size_hint_y: None
+		on_text: root.parent.parent.parent.parent.on_morphology_update()
+
+	DropDown:
+		id: dropdown_operation
+		on_parent: self.dismiss()
+		on_select: operation.text = args[1]
+		Button:
+			text: 'Erosion'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+		Button:
+			text: 'Dilation'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+		Button:
+			text: 'Opening'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+		Button:
+			text: 'Closing'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+		Button:
+			text: 'Gradient'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+		Button:
+			text: 'Top Hat'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+		Button:
+			text: 'Black Hat'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_operation.select(self.text)
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Kernel'
+	Button:
+		id: kernel
+		text: 'Uniform'
+		on_release: dropdown_kernel.open(self)
+		size_hint_y: None
+		on_text: root.parent.parent.parent.parent.on_morphology_update()
+
+	DropDown:
+		id: dropdown_kernel
+		on_parent: self.dismiss()
+		on_select: kernel.text = args[1]
+		Button:
+			text: 'Uniform'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_kernel.select(self.text)
+		Button:
+			text: 'Rect'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_kernel.select(self.text)
+		Button:
+			text: 'Ellipse'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_kernel.select(self.text)
+		Button:
+			text: 'Cross'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown_kernel.select(self.text)
+
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Kernel Size'
+	IntInput:
+		id: kernel_size
+		text: '3'
+		on_text: root.parent.parent.parent.parent.on_morphology_update()
 
 <SingleDisplayWidget>:
 	RelativeLayout:

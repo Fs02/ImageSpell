@@ -24,6 +24,7 @@ from spells.quantization import Quantization
 from spells.equalizehist import EqualizeHist
 from spells.segmentation import Segmentation
 from spells.colormap import Colormap
+from spells.morphology import Morphology
 
 
 class IntInput(TextInput):
@@ -70,6 +71,9 @@ class ColormapPropertyWidget(GridLayout):
 	pass
 
 class SegmentationPropertyWidget(GridLayout):
+	pass
+
+class MorphologyPropertyWidget(GridLayout):
 	pass
 
 class SingleDisplayWidget(BoxLayout):
@@ -122,6 +126,7 @@ class Root(BoxLayout):
 		self.equalizehist_properties = EqualizeHistPropertyWidget()
 		self.colormap_properties = ColormapPropertyWidget()
 		self.segmentation_properties = SegmentationPropertyWidget()
+		self.morphology_properties = MorphologyPropertyWidget()
 
 	def display_single(self, image):
 		self.single_display.update_display(image)
@@ -244,6 +249,24 @@ class Root(BoxLayout):
 		distance_transform = self.segmentation_properties.ids.mode.text != 'Erosion'
 		opening, unknown, markers, segmented = Segmentation().process(self.cv_image, distance_transform)
 		self.display_quad(('Threshold', opening), ('Unknown', unknown), ('Markers', markers), ('Segmented', segmented))
+
+	def on_morphology(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.morphology_properties)
+		self.morphology_properties.ids.operation.text = 'Erosion'
+		self.morphology_properties.ids.kernel.text = 'Uniform'
+		self.morphology_properties.ids.kernel_size.text = '3'
+		self.on_morphology_update()
+
+	def on_morphology_update(self):
+		operation = self.morphology_properties.ids.operation.text
+		kernel = self.morphology_properties.ids.kernel.text
+		kernel_size = int(self.morphology_properties.ids.kernel_size.text)
+		title = str(kernel_size) + 'x' + str(kernel_size) + ' ' + kernel + ' ' + operation
+		self.display_single((title, Morphology().process(self.cv_image, operation, kernel, kernel_size)))
 
 	def dismiss_popup(self):
 		self._popup.dismiss()
