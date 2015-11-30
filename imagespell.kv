@@ -96,6 +96,7 @@ Root:
 			text: 'Edge Detection'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_edgedetection()
 		Button:
 			text: 'Colormap'
 			size_hint: 1, None
@@ -245,7 +246,7 @@ Root:
 			Rectangle:
 				pos: self.pos
 				size: self.size
-		text: 'Type'
+		text: 'Operator'
 	Button:
 		id: type
 		text: 'Mean'
@@ -289,9 +290,135 @@ Root:
 	Slider:
 		id: kernel_size
 		min: 3
-		max: 15
+		max: 31
 		step: 2
 		on_value: root.parent.parent.parent.parent.on_blur_update()
+
+<EdgeDetectionPropertyWidget>:
+	# trick to not lost the Dropdown instance
+	__safe_id: [dropdown.__self__, direction_dropdown.__self__]
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Operator'
+	Button:
+		id: operator
+		text: 'Prewitt'
+		on_release: dropdown.open(self)
+		size_hint_y: None
+		on_text: root.parent.parent.parent.parent.on_edgedetection_update()
+
+	DropDown:
+		id: dropdown
+		on_parent: self.dismiss()
+		on_select: operator.text = args[1]
+		Button:
+			text: 'Prewitt'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Sobel'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Canny'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Laplacian'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+#		Button:
+#			text: 'Prewitt 2'
+#			size_hint_y: None
+#			height: 30
+#			on_release: dropdown.select(self.text)
+
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Kernel Size (Sobel)'
+	IntInput:
+		id: kernel_size
+		text: '3'
+		on_text: root.parent.parent.parent.parent.on_edgedetection_update()
+
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Min Values (Canny)'
+	IntInput:
+		id: min_values
+		text: '100'
+		on_text: root.parent.parent.parent.parent.on_edgedetection_update()
+
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Max Values (Canny)'
+	IntInput:
+		id: max_values
+		text: '200'
+		on_text: root.parent.parent.parent.parent.on_edgedetection_update()
+
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Operator'
+	Button:
+		id: direction
+		text: 'Both'
+		on_release: direction_dropdown.open(self)
+		size_hint_y: None
+		on_text: root.parent.parent.parent.parent.on_edgedetection_update()
+
+	DropDown:
+		id: direction_dropdown
+		on_parent: self.dismiss()
+		on_select: direction.text = args[1]
+		Button:
+			text: 'Both'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'Horizontal'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'Vertical'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
 
 <ColormapPropertyWidget>:
 	# trick to not lost the Dropdown instance
@@ -525,10 +652,12 @@ Root:
 				pos: self.pos
 				size: self.size
 		text: 'Kernel Size'
-	IntInput:
+	Slider:
 		id: kernel_size
-		text: '3'
-		on_text: root.parent.parent.parent.parent.on_morphology_update()
+		min: 3
+		max: 11
+		step: 2
+		on_value: root.parent.parent.parent.parent.on_morphology_update()
 
 <SingleDisplayWidget>:
 	RelativeLayout:

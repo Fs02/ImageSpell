@@ -24,6 +24,7 @@ from spells.quantization import Quantization
 from spells.equalizehist import EqualizeHist
 from spells.segmentation import Segmentation
 from spells.blur import Blur
+from spells.edgedetection import EdgeDetection
 from spells.colormap import Colormap
 from spells.morphology import Morphology
 
@@ -83,6 +84,8 @@ class EqualizeHistPropertyWidget(GridLayout):
 class BlurPropertyWidget(GridLayout):
 	pass
 
+class EdgeDetectionPropertyWidget(GridLayout):
+	pass
 
 class ColormapPropertyWidget(GridLayout):
 	pass
@@ -150,6 +153,7 @@ class Root(BoxLayout):
 		self.quantization_properties = QuantizationPropertyWidget()
 		self.equalizehist_properties = EqualizeHistPropertyWidget()
 		self.blur_properties = BlurPropertyWidget()
+		self.edgedetection_properties = EdgeDetectionPropertyWidget()
 		self.colormap_properties = ColormapPropertyWidget()
 		self.segmentation_properties = SegmentationPropertyWidget()
 		self.morphology_properties = MorphologyPropertyWidget()
@@ -273,6 +277,28 @@ class Root(BoxLayout):
 		kernel_size = int(self.blur_properties.ids.kernel_size.value)
 		self.display_single((str(kernel_size) + "px " + blur_type + " filtering", Blur().process(self.cv_image, blur_type, kernel_size)))
 
+	def on_edgedetection(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.edgedetection_properties)
+		self.edgedetection_properties.ids.operator.text = 'Prewitt'
+		self.edgedetection_properties.ids.kernel_size.text = '3'
+		self.edgedetection_properties.ids.min_values.text = '100'
+		self.edgedetection_properties.ids.max_values.text = '200'
+		self.edgedetection_properties.ids.direction.text = 'Both'
+		self.on_edgedetection_update()
+
+	def on_edgedetection_update(self):
+		operator = self.edgedetection_properties.ids.operator.text
+		kernel_size = int(self.edgedetection_properties.ids.kernel_size.text) if self.edgedetection_properties.ids.kernel_size.text != '' else 3
+		min_values = int(self.edgedetection_properties.ids.min_values.text) if self.edgedetection_properties.ids.min_values.text != '' else 100
+		max_values = int(self.edgedetection_properties.ids.max_values.text) if self.edgedetection_properties.ids.max_values.text != '' else 200
+		direction = self.edgedetection_properties.ids.direction.text
+
+		self.display_single((operator, EdgeDetection().process(self.cv_image, operator, kernel_size, direction, min_values, max_values)))
+
 	def on_colormap(self):
 		if not hasattr(self, 'cv_image'):
 			return
@@ -308,13 +334,13 @@ class Root(BoxLayout):
 		self.ids.properties.add_widget(self.morphology_properties)
 		self.morphology_properties.ids.operation.text = 'Erosion'
 		self.morphology_properties.ids.kernel.text = 'Uniform'
-		self.morphology_properties.ids.kernel_size.text = '3'
+		self.morphology_properties.ids.kernel_size.value = 3
 		self.on_morphology_update()
 
 	def on_morphology_update(self):
 		operation = self.morphology_properties.ids.operation.text
 		kernel = self.morphology_properties.ids.kernel.text
-		kernel_size = int(self.morphology_properties.ids.kernel_size.text) if self.morphology_properties.ids.kernel_size.text != '' else 3
+		kernel_size = self.morphology_properties.ids.kernel_size.value
 		title = str(kernel_size) + 'x' + str(kernel_size) + ' ' + kernel + ' ' + operation
 		self.display_single((title, Morphology().process(self.cv_image, operation, kernel, kernel_size)))
 
