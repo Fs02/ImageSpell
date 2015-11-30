@@ -256,7 +256,7 @@ Root:
 	DropDown:
 		id: dropdown
 		on_parent: self.dismiss()
-		on_select: map.text = args[1]
+		on_select: type.text = args[1]
 		Button:
 			text: 'Mean'
 			size_hint_y: None
@@ -277,6 +277,21 @@ Root:
 			size_hint_y: None
 			height: 30
 			on_release: dropdown.select(self.text)
+
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Kernel Size'
+	Slider:
+		id: kernel_size
+		min: 3
+		max: 15
+		step: 2
+		on_value: root.parent.parent.parent.parent.on_blur_update()
 
 <ColormapPropertyWidget>:
 	# trick to not lost the Dropdown instance

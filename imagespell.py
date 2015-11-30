@@ -29,23 +29,23 @@ from spells.morphology import Morphology
 
 
 class IntInput(TextInput):
-    pat = re.compile('[^0-9]')
+	pat = re.compile('[^0-9]')
 
-    def insert_text(self, substring, from_undo=False):
-        s = re.sub(self.pat, '', substring)
-        return super(IntInput, self).insert_text(s, from_undo=from_undo)
+	def insert_text(self, substring, from_undo=False):
+		s = re.sub(self.pat, '', substring)
+		return super(IntInput, self).insert_text(s, from_undo=from_undo)
 
 
 class FloatInput(TextInput):
-    pat = re.compile('[^0-9]')
+	pat = re.compile('[^0-9]')
 
-    def insert_text(self, substring, from_undo=False):
-        pat = self.pat
-        if '.' in self.text:
-            s = re.sub(pat, '', substring)
-        else:
-            s = '.'.join([re.sub(pat, '', s) for s in substring.split('.', 1)])
-        return super(FloatInput, self).insert_text(s, from_undo=from_undo)
+	def insert_text(self, substring, from_undo=False):
+		pat = self.pat
+		if '.' in self.text:
+			s = re.sub(pat, '', substring)
+		else:
+			s = '.'.join([re.sub(pat, '', s) for s in substring.split('.', 1)])
+		return super(FloatInput, self).insert_text(s, from_undo=from_undo)
 
 
 class ActionBarWidget(ActionBar):
@@ -120,65 +120,67 @@ class QuadDisplayWidget(BoxLayout):
 
 
 class LoadDialog(FloatLayout):
-    load = ObjectProperty(None)
-    cancel = ObjectProperty(None)
+	load = ObjectProperty(None)
+	cancel = ObjectProperty(None)
 
 
 class SaveDialog(FloatLayout):
-    save = ObjectProperty(None)
-    text_input = ObjectProperty(None)
-    cancel = ObjectProperty(None)
+	save = ObjectProperty(None)
+	text_input = ObjectProperty(None)
+	cancel = ObjectProperty(None)
 
 
 class Root(BoxLayout):
-    loadfile = ObjectProperty(None)
-    savefile = ObjectProperty(None)
-    text_input = ObjectProperty(None)
+	loadfile = ObjectProperty(None)
+	savefile = ObjectProperty(None)
+	text_input = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
-        super(Root, self).__init__(**kwargs)
+	def __init__(self, **kwargs):
+		super(Root, self).__init__(**kwargs)
 
-        # viewport widget
-        self.single_display = SingleDisplayWidget()
-        self.quad_display = QuadDisplayWidget()
+		# viewport widget
+		self.single_display = SingleDisplayWidget()
+		self.quad_display = QuadDisplayWidget()
 
-        # property widget
-        self.rotate_properties = RotatePropertyWidget()
-        self.resize_properties = ResizePropertyWidget()
-        self.flip_properties = FlipPropertyWidget()
-        self.sampling_properties = SamplingPropertyWidget()
-        self.quantization_properties = QuantizationPropertyWidget()
-        self.equalizehist_properties = EqualizeHistPropertyWidget()
-        self.blur_properties = BlurPropertyWidget()
-        self.colormap_properties = ColormapPropertyWidget()
-        self.segmentation_properties = SegmentationPropertyWidget()
-        self.morphology_properties = MorphologyPropertyWidget()
+		# property widget
+		self.rotate_properties = RotatePropertyWidget()
+		self.resize_properties = ResizePropertyWidget()
+		self.flip_properties = FlipPropertyWidget()
+		self.sampling_properties = SamplingPropertyWidget()
+		self.quantization_properties = QuantizationPropertyWidget()
+		self.equalizehist_properties = EqualizeHistPropertyWidget()
+		self.blur_properties = BlurPropertyWidget()
+		self.colormap_properties = ColormapPropertyWidget()
+		self.segmentation_properties = SegmentationPropertyWidget()
+		self.morphology_properties = MorphologyPropertyWidget()
 
-    def display_single(self, image):
-        self.single_display.update_display(image)
-        if self.ids.viewport.children[0] != self.single_display:
-            self.ids.viewport.clear_widgets()
-            self.ids.viewport.add_widget(self.single_display)
+	def display_single(self, image):
+		self.single_display.update_display(image)
+		if self.ids.viewport.children[0] != self.single_display:
+			self.ids.viewport.clear_widgets()
+			self.ids.viewport.add_widget(self.single_display)
 
-    def display_quad(self, top_left, top_right, bottom_left, bottom_right):
-        self.quad_display.update_display(
-    top_left, top_right, bottom_left, bottom_right)
-        if self.ids.viewport.children[0] != self.quad_display:
-            self.ids.viewport.clear_widgets()
-            self.ids.viewport.add_widget(self.quad_display)
+	def display_quad(self, top_left, top_right, bottom_left, bottom_right):
+		self.quad_display.update_display(
+			top_left, top_right, bottom_left, bottom_right)
+		if self.ids.viewport.children[0] != self.quad_display:
+			self.ids.viewport.clear_widgets()
+			self.ids.viewport.add_widget(self.quad_display)
 
 	def on_rotate(self):
 		if not hasattr(self, 'cv_image'):
 			return
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
-            self.ids.properties.add_widget(self.rotate_properties)
+			self.ids.properties.add_widget(self.rotate_properties)
 		self.rotate_properties.ids.rotation.value = 0
-		self.display_single(('Original', SpellBase.to_kivy_texture(self.cv_image)))
+		self.display_single(
+			('Original', SpellBase.to_kivy_texture(self.cv_image)))
 
 	def on_rotate_update(self):
 		rotation = self.rotate_properties.ids.rotation.value
-		self.display_single((str(rotation) + " Degrees", Rotate().process(self.cv_image, rotation)))
+		self.display_single((str(rotation) + " Degrees",
+							Rotate().process(self.cv_image, rotation)))
 
 	def on_resize(self):
 		if not hasattr(self, 'cv_image'):
@@ -191,10 +193,13 @@ class Root(BoxLayout):
 		self.on_resize_update()
 
 	def on_resize_update(self):
-		width_scale =  float(self.resize_properties.ids.width_scale.text) if self.resize_properties.ids.width_scale.text != '' else 1
-		height_scale = float(self.resize_properties.ids.height_scale.text) if self.resize_properties.ids.height_scale.text != '' else 1
+		width_scale = float(
+			self.resize_properties.ids.width_scale.text) if self.resize_properties.ids.width_scale.text != '' else 1
+		height_scale = float(
+			self.resize_properties.ids.height_scale.text) if self.resize_properties.ids.height_scale.text != '' else 1
 
-		self.display_single(("Scaled", Resize().process(self.cv_image, (width_scale, height_scale))))
+		self.display_single(("Scaled", Resize().process(
+			self.cv_image, (width_scale, height_scale))))
 
 	def on_flip(self):
 		if not hasattr(self, 'cv_image'):
@@ -210,7 +215,8 @@ class Root(BoxLayout):
 		horizontal = self.flip_properties.ids.horizontal.active
 		vertical = self.flip_properties.ids.vertical.active
 
-		self.display_single(("Flipped", Flip().process(self.cv_image, horizontal, vertical)))
+		self.display_single(("Flipped", Flip().process(
+			self.cv_image, horizontal, vertical)))
 
 	def on_sampling(self):
 		if not hasattr(self, 'cv_image'):
@@ -222,9 +228,11 @@ class Root(BoxLayout):
 		self.on_sampling_update()
 
 	def on_sampling_update(self):
-		factor =  int(self.sampling_properties.ids.factor.text) if self.sampling_properties.ids.factor.text != '' else 1
+		factor = int(
+			self.sampling_properties.ids.factor.text) if self.sampling_properties.ids.factor.text != '' else 1
 
-		self.display_single(("Sampling " + str(factor), Sampling().process(self.cv_image, factor)))
+		self.display_single(
+			("Sampling " + str(factor), Sampling().process(self.cv_image, factor)))
 
 	def on_quantization(self):
 		if not hasattr(self, 'cv_image'):
@@ -236,9 +244,10 @@ class Root(BoxLayout):
 		self.on_quantization_update()
 
 	def on_quantization_update(self):
-		K =  int(self.quantization_properties.ids.factor.text) if self.quantization_properties.ids.factor.text != '' else 1
+		K = int(self.quantization_properties.ids.factor.text) if self.quantization_properties.ids.factor.text != '' else 1
 
-		self.display_single(("K = " + str(K), Quantization().process(self.cv_image, K)))
+		self.display_single(
+			("K = " + str(K), Quantization().process(self.cv_image, K)))
 
 	def on_equalizehist(self):
 		if not hasattr(self, 'cv_image'):
@@ -246,7 +255,8 @@ class Root(BoxLayout):
 		if len(self.ids.properties.children) > 0:
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.equalizehist_properties)
-		self.display_single(('Equalized Histogram', EqualizeHist().process(self.cv_image)))
+		self.display_single(
+			('Equalized Histogram', EqualizeHist().process(self.cv_image)))
 
 	def on_blur(self):
 		if not hasattr(self, 'cv_image'):
@@ -255,12 +265,13 @@ class Root(BoxLayout):
 			self.ids.properties.clear_widgets()
 		self.ids.properties.add_widget(self.blur_properties)
 		self.blur_properties.ids.type.text = 'Mean'
+		self.blur_properties.ids.kernel_size.value = 3
 		self.on_blur_update()
 
 	def on_blur_update(self):
 		blur_type = self.blur_properties.ids.type.text
-        kernel_size = 5
-        self.display_single((blur_type, Blur().process(self.cv_image, blur_type, kernel_size)))
+		kernel_size = int(self.blur_properties.ids.kernel_size.value)
+		self.display_single((str(kernel_size) + "px " + blur_type + " filtering", Blur().process(self.cv_image, blur_type, kernel_size)))
 
 	def on_colormap(self):
 		if not hasattr(self, 'cv_image'):
@@ -313,7 +324,7 @@ class Root(BoxLayout):
 	def show_load(self):
 		content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
 		self._popup = Popup(title="Load file", content=content,
-                            size_hint=(0.9, 0.9))
+							size_hint=(0.9, 0.9))
 		self._popup.open()
 
 	def show_save(self):
@@ -330,8 +341,8 @@ class Root(BoxLayout):
 		self.dismiss_popup()
 
 	def save(self, path, filename):
-        # with open(os.path.join(path, filename), 'w') as stream:
-        #    stream.write(self.text_input.text)
+		# with open(os.path.join(path, filename), 'w') as stream:
+		#    stream.write(self.text_input.text)
 
 		self.dismiss_popup()
 
