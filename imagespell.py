@@ -24,6 +24,7 @@ from spells.quantization import Quantization
 from spells.equalizehist import EqualizeHist
 from spells.segmentation import Segmentation
 from spells.blur import Blur
+from spells.mask import Mask
 from spells.edgedetection import EdgeDetection
 from spells.colormap import Colormap
 from spells.morphology import Morphology
@@ -80,6 +81,8 @@ class QuantizationPropertyWidget(GridLayout):
 class EqualizeHistPropertyWidget(GridLayout):
 	pass
 
+class MaskPropertyWidget(GridLayout):
+	pass
 
 class BlurPropertyWidget(GridLayout):
 	pass
@@ -125,6 +128,7 @@ class QuadDisplayWidget(BoxLayout):
 class LoadDialog(FloatLayout):
 	load = ObjectProperty(None)
 	cancel = ObjectProperty(None)
+	mask_image = ObjectProperty(None)
 
 
 class SaveDialog(FloatLayout):
@@ -152,6 +156,7 @@ class Root(BoxLayout):
 		self.sampling_properties = SamplingPropertyWidget()
 		self.quantization_properties = QuantizationPropertyWidget()
 		self.equalizehist_properties = EqualizeHistPropertyWidget()
+		self.mask_properties = MaskPropertyWidget()
 		self.blur_properties = BlurPropertyWidget()
 		self.edgedetection_properties = EdgeDetectionPropertyWidget()
 		self.colormap_properties = ColormapPropertyWidget()
@@ -262,6 +267,13 @@ class Root(BoxLayout):
 		self.display_single(
 			('Equalized Histogram', EqualizeHist().process(self.cv_image)))
 
+	def on_mask(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.ids.properties.add_widget(self.mask_properties)
+
 	def on_blur(self):
 		if not hasattr(self, 'cv_image'):
 			return
@@ -347,8 +359,20 @@ class Root(BoxLayout):
 	def dismiss_popup(self):
 		self._popup.dismiss()
 
+	def show_load_mask(self):
+		content = LoadDialog(load=self.load_mask, cancel=self.dismiss_popup, mask_image=True)
+		self._popup = Popup(title="Load file", content=content,
+							size_hint=(0.9, 0.9))
+		self._popup.open()
+
+	def load_mask(self, path, filename, mask_image):
+		if len(filename) > 0 and mask_image:
+			cv_image_mask = cv2.imread(filename[0], 0)
+			self.display_single(('Mask', Mask().process(self.cv_image, cv_image_mask)))
+		self.dismiss_popup()
+
 	def show_load(self):
-		content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+		content = LoadDialog(load=self.load, cancel=self.dismiss_popup, mask_image=False)
 		self._popup = Popup(title="Load file", content=content,
 							size_hint=(0.9, 0.9))
 		self._popup.open()
@@ -358,8 +382,8 @@ class Root(BoxLayout):
 		self._popup = Popup(title="Save file", content=content, size_hint=(0.9, 0.9))
 		self._popup.open()
 
-	def load(self, path, filename):
-		if len(filename) > 0:
+	def load(self, path, filename, mask_image):
+		if len(filename) > 0 and not mask_image:
 			self.cv_image = cv2.imread(filename[0])
 			original = SpellBase.to_kivy_texture(self.cv_image)
 			red, green, blue = RGB().process(self.cv_image)

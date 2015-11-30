@@ -87,6 +87,7 @@ Root:
 			text: 'Mask'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_mask()
 		Button:
 			text: 'Blur'
 			size_hint: 1, None
@@ -231,6 +232,25 @@ Root:
 	row_default_height: 30
 	row_force_default: True
 	spacing: 0, 5
+
+<MaskPropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Mask Image'
+	Button:
+		id: type
+		text: 'Select Image'
+		on_release: root.parent.parent.parent.parent.show_load_mask()
+		size_hint_y: None
 
 <BlurPropertyWidget>:
 	# trick to not lost the Dropdown instance
@@ -789,7 +809,7 @@ Root:
 
 			Button:
 				text: "Load"
-				on_release: root.load(filechooser.path, filechooser.selection)
+				on_release: root.load(filechooser.path, filechooser.selection, root.mask_image)
 
 <SaveDialog>:
 	text_input: text_input
