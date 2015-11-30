@@ -88,9 +88,10 @@ Root:
 			size_hint: 1, None
 			height: 30
 		Button:
-			text: 'Filter'
+			text: 'Blur'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_blur()
 		Button:
 			text: 'Edge Detection'
 			size_hint: 1, None
@@ -229,6 +230,53 @@ Root:
 	row_default_height: 30
 	row_force_default: True
 	spacing: 0, 5
+
+<BlurPropertyWidget>:
+	# trick to not lost the Dropdown instance
+	__safe_id: [dropdown.__self__]
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Type'
+	Button:
+		id: type
+		text: 'Mean'
+		on_release: dropdown.open(self)
+		size_hint_y: None
+		on_text: root.parent.parent.parent.parent.on_blur_update()
+
+	DropDown:
+		id: dropdown
+		on_parent: self.dismiss()
+		on_select: map.text = args[1]
+		Button:
+			text: 'Mean'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Mode'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Median'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Gaussian'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
 
 <ColormapPropertyWidget>:
 	# trick to not lost the Dropdown instance
