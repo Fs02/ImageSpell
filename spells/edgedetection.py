@@ -11,30 +11,20 @@ def padding_zeros(vector, pad_width, iaxis, kwargs):
 	return vector
 
 class EdgeDetection(SpellBase):
-	def process(self, cv_image, mode = 'Prewitt', kernel_size = 3, direction = 'Both', canny_min = 100, canny_max = 200):
-		if direction == 'Horizontal':
-			dx = 1
-			dy = 0
-		elif direction == 'Vertical':
-			dx = 0
-			dy = 1
-		else:
-			dx = 1
-			dy = 1
-
+	def process(self, cv_image, mode = 'Prewitt', kernel_size = 3, direction = 'North', canny_min = 100, canny_max = 200):
 		gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 		smoothed = cv2.GaussianBlur(gray,(5,5),0)
 		edge = {
-			'Prewitt': self.prewitt(smoothed, dx, dy),
-			'Sobel': np.uint8(cv2.Sobel(smoothed, cv2.CV_8U, dx, dy, ksize=kernel_size) > 10) * 255,
+			'Prewitt': self.prewitt(smoothed),
+			'Sobel': cv2.equalizeHist(cv2.Sobel(smoothed, cv2.CV_8U, 1, 1, ksize=kernel_size)),
 			'Canny': cv2.Canny(smoothed,canny_min, canny_max),
-			'Laplacian': np.uint8(cv2.Laplacian(smoothed, cv2.CV_8U) > 10) * 255,
-			'Prewitt 2': gray,
+			'Laplacian': cv2.equalizeHist(cv2.Laplacian(smoothed, cv2.CV_8U)),
+			'Prewitt Compass': self.prewitt2(smoothed, direction),
 		}[mode]
 
 		return SpellBase.to_kivy_texture(cv2.cvtColor(edge, cv2.COLOR_GRAY2RGB))
 
-	def prewitt(self, gray_image, dx, dy):
+	def prewitt(self, gray_image):
 		# Construct the mask
 		kx = np.matrix('\
 			-1 -1 -1;\
@@ -60,5 +50,19 @@ class EdgeDetection(SpellBase):
 				result[y,x] = math.sqrt(gx[y,x]**2 + gy[y,x]**2)
 				max_p = max(max_p, result[y,x])
 
-		print np.uint8(result > 0.08995 * max_p) * 255
 		return np.uint8(result > 0.08995 * max_p) * 255
+
+	def prewitt2(self, gray_image, direction):
+		kernel = {
+			'North': np.matrix('-1 -1 -1; 1 -2 1; 1 1 1'),
+			'North East': np.matrix('1 -1 -1; 1 -2 -1; 1 1 1'),
+			'East': np.matrix('1 1 -1; 1 -2 -1; 1  1 -1'),
+			'South East': np.matrix('1 1 1; 1 -2 -1; 1 -1 -1'),
+			'South': np.matrix('1 1 1; 1 -2 1; -1 -1 -1'),
+			'South West': np.matrix('1 1 1; -1 -2 1; -1 -1 1'),
+			'West': np.matrix('-1 1 1; -1 -2 1; -1 1 1'),
+			'North West': np.matrix('-1 -1 1; -1 -2 1; 1 1 1')
+		}[direction]
+
+		g = convolve2d(gray_image, kernel)
+		return np.uint8(g)

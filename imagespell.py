@@ -298,7 +298,7 @@ class Root(BoxLayout):
 		self.edgedetection_properties.ids.kernel_size.text = '3'
 		self.edgedetection_properties.ids.min_values.text = '100'
 		self.edgedetection_properties.ids.max_values.text = '200'
-		self.edgedetection_properties.ids.direction.text = 'Both'
+		self.edgedetection_properties.ids.direction.text = 'North'
 		self.on_edgedetection_update()
 
 	def on_edgedetection_update(self):

@@ -37,5 +37,4 @@ class Blur(SpellBase):
 			for y in range(padding, pad_image.shape[1]-padding):
 				neighbord = pad_image[x-padding:x+padding+1, y-padding:y+padding+1].flatten()
 				result[x-padding, y-padding] = np.bincount(neighbord).argmax()
-				#print str(x) + "," +str(y) + "->" + str(neighbord) + "->" + str(result[x-padding, y-padding])
 		return result

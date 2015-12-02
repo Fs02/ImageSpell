@@ -360,11 +360,11 @@ Root:
 			size_hint_y: None
 			height: 30
 			on_release: dropdown.select(self.text)
-#		Button:
-#			text: 'Prewitt 2'
-#			size_hint_y: None
-#			height: 30
-#			on_release: dropdown.select(self.text)
+		Button:
+			text: 'Prewitt Compass'
+			size_hint_y: None
+			height: 30
+			on_release: dropdown.select(self.text)
 
 	Label:
 		canvas.before:
@@ -412,10 +412,10 @@ Root:
 			Rectangle:
 				pos: self.pos
 				size: self.size
-		text: 'Operator'
+		text: 'Direction (Prewitt Compass)'
 	Button:
 		id: direction
-		text: 'Both'
+		text: 'North'
 		on_release: direction_dropdown.open(self)
 		size_hint_y: None
 		on_text: root.parent.parent.parent.parent.on_edgedetection_update()
@@ -425,17 +425,42 @@ Root:
 		on_parent: self.dismiss()
 		on_select: direction.text = args[1]
 		Button:
-			text: 'Both'
+			text: 'North'
 			size_hint_y: None
 			height: 30
 			on_release: direction_dropdown.select(self.text)
 		Button:
-			text: 'Horizontal'
+			text: 'North East'
 			size_hint_y: None
 			height: 30
 			on_release: direction_dropdown.select(self.text)
 		Button:
-			text: 'Vertical'
+			text: 'East'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'South East'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'South'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'South West'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'West'
+			size_hint_y: None
+			height: 30
+			on_release: direction_dropdown.select(self.text)
+		Button:
+			text: 'North West'
 			size_hint_y: None
 			height: 30
 			on_release: direction_dropdown.select(self.text)
