@@ -2,6 +2,8 @@ from spellbase import SpellBase
 from kivy.graphics.texture import Texture
 import cv2
 import numpy as np
+from scipy.signal import convolve2d
+import math
 
 def padding_zeros(vector, pad_width, iaxis, kwargs):
 	vector[:pad_width[0]] = 0
@@ -30,23 +32,31 @@ class EdgeDetection(SpellBase):
 			'Prewitt 2': SpellBase.to_kivy_texture(cv2.GaussianBlur(cv_image,(kernel_size,kernel_size),0)),
 		}[mode]
 
-	def prewitt(self, cv_image, dx, dy):
-		if dy>0 and dx>0:
-			operator = np.matrix('\
-				-2 -1  0;\
-				-1  0  1;\
-				 0  1  2 \
-				')
-		elif dy>0:
-			operator = np.matrix('\
-				-1  0  1;\
-				-1  0  1;\
-				-1  0  1 \
-				')
-		else:
-			operator = np.matrix('\
-				-1 -1 -1;\
-				 0  0  0;\
-				 1  1  1 \
-				')
-		return cv2.filter2D(cv_image, -1, operator)
+	def prewitt(self, gray_image, dx, dy):
+		# Construct the mask
+		kx = np.matrix('\
+			-1 -1 -1;\
+			 0  0  0;\
+			 1  1  1 \
+			') / 6.0
+
+		ky = np.matrix('\
+			-1  0  1;\
+			-1  0  1;\
+			-1  0  1 \
+			') / 6.0
+
+		# Convolute
+		gx = convolve2d(gray_image, kx, 'same')
+		gy = convolve2d(gray_image, ky, 'same')
+
+		height,width = gray_image.shape[:2]
+		result = gray_image.copy()
+		max_p = 0
+		for y in range(0, height):
+			for x in range(0, width):
+				result[y,x] = math.sqrt(gx[y,x]**2 + gy[y,x]**2)
+				max_p = max(max_p, result[y,x])
+
+		print np.uint8(result > 0.08995 * max_p) * 255
+		return np.uint8(result > 0.08995 * max_p) * 255

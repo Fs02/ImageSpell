@@ -93,7 +93,6 @@ class EdgeDetectionPropertyWidget(GridLayout):
 class ColormapPropertyWidget(GridLayout):
 	pass
 
-
 class SegmentationPropertyWidget(GridLayout):
 	pass
 
