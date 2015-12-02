@@ -20,6 +20,7 @@ from spells.rotate import Rotate
 from spells.resize import Resize
 from spells.flip import Flip
 from spells.sampling import Sampling
+from spells.copy import Copy
 from spells.quantization import Quantization
 from spells.equalizehist import EqualizeHist
 from spells.segmentation import Segmentation
@@ -53,30 +54,26 @@ class FloatInput(TextInput):
 class ActionBarWidget(ActionBar):
 	pass
 
-
 class MenuWidget(ScrollView):
 	pass
-
 
 class RotatePropertyWidget(GridLayout):
 	pass
 
-
 class ResizePropertyWidget(GridLayout):
 	pass
-
 
 class FlipPropertyWidget(GridLayout):
 	pass
 
-
 class SamplingPropertyWidget(GridLayout):
 	pass
 
+class CopyPropertyWidget(GridLayout):
+	pass
 
 class QuantizationPropertyWidget(GridLayout):
 	pass
-
 
 class EqualizeHistPropertyWidget(GridLayout):
 	pass
@@ -95,7 +92,6 @@ class ColormapPropertyWidget(GridLayout):
 
 class SegmentationPropertyWidget(GridLayout):
 	pass
-
 
 class MorphologyPropertyWidget(GridLayout):
 	pass
@@ -153,6 +149,7 @@ class Root(BoxLayout):
 		self.resize_properties = ResizePropertyWidget()
 		self.flip_properties = FlipPropertyWidget()
 		self.sampling_properties = SamplingPropertyWidget()
+		self.copy_properties = CopyPropertyWidget()
 		self.quantization_properties = QuantizationPropertyWidget()
 		self.equalizehist_properties = EqualizeHistPropertyWidget()
 		self.mask_properties = MaskPropertyWidget()
@@ -241,6 +238,29 @@ class Root(BoxLayout):
 
 		self.display_single(
 			("Sampling " + str(factor), Sampling().process(self.cv_image, factor)))
+
+	def on_copy(self):
+		if not hasattr(self, 'cv_image'):
+			return
+		if len(self.ids.properties.children) > 0:
+			self.ids.properties.clear_widgets()
+		self.copy_properties.ids.source_x.text = "0"
+		self.copy_properties.ids.source_y.text = "0"
+		self.copy_properties.ids.target_x.text = "0"
+		self.copy_properties.ids.target_y.text = "0"
+		self.copy_properties.ids.size_x.text = "100"
+		self.copy_properties.ids.size_y.text = "100"
+		self.ids.properties.add_widget(self.copy_properties)
+		self.display_single(("Copy & Paste", SpellBase().to_kivy_texture(self.cv_image)))
+
+	def on_copy_update(self, cut = False):
+		source_x = int(self.copy_properties.ids.source_x.text) if self.copy_properties.ids.source_x.text != '' else 0
+		source_y = int(self.copy_properties.ids.source_y.text) if self.copy_properties.ids.source_y.text != '' else 0
+		target_x = int(self.copy_properties.ids.target_x.text) if self.copy_properties.ids.target_x.text != '' else 0
+		target_y = int(self.copy_properties.ids.target_y.text) if self.copy_properties.ids.target_y.text != '' else 0
+		size_x = int(self.copy_properties.ids.size_x.text) if self.copy_properties.ids.size_x.text != '' else 1
+		size_y = int(self.copy_properties.ids.size_y.text) if self.copy_properties.ids.size_y.text != '' else 1
+		self.display_single(("Copy & Paste", Copy().process(self.cv_image, (source_x, source_y), (target_x, target_y), (size_x, size_y), cut)))
 
 	def on_quantization(self):
 		if not hasattr(self, 'cv_image'):

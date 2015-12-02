@@ -73,6 +73,7 @@ Root:
 			text: 'Copy & Paste'
 			size_hint: 1, None
 			height: 30
+			on_release: root.parent.parent.parent.on_copy()
 		Button:
 			text: 'Quantization'
 			size_hint: 1, None
@@ -208,6 +209,77 @@ Root:
 		id: factor
 		text: '1'
 		on_text: if not(root.parent is None): root.parent.parent.parent.parent.on_sampling_update()
+
+<CopyPropertyWidget>:
+	cols: 1
+	row_default_height: 30
+	row_force_default: True
+	spacing: 0, 5
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Source Position'
+	BoxLayout:
+		IntInput:
+			id: source_x
+			text: '0'
+		IntInput:
+			id: source_y
+			text: '0'
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Target Position'
+	BoxLayout:
+		IntInput:
+			id: target_x
+			text: '0'
+		IntInput:
+			id: target_y
+			text: '0'
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Size'
+	BoxLayout:
+		IntInput:
+			id: size_x
+			text: '100'
+		IntInput:
+			id: size_y
+			text: '100'
+	Label:
+		canvas.before:
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.pos
+				size: self.size
+		text: 'Action'
+	BoxLayout:
+		size_hint_y: None
+		Button:
+			id: copy
+			text: 'Copy'
+			height: 30
+			on_release: root.parent.parent.parent.parent.on_copy_update()
+		Button:
+			id: cut
+			text: 'Cut'
+			height: 30
+			on_release: root.parent.parent.parent.parent.on_copy_update(True)
 
 <QuantizationPropertyWidget>:
 	cols: 1
