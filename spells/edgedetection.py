@@ -24,13 +24,15 @@ class EdgeDetection(SpellBase):
 
 		gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
 		smoothed = cv2.GaussianBlur(gray,(5,5),0)
-		return {
-			'Prewitt': SpellBase.to_kivy_texture(cv2.cvtColor(self.prewitt(smoothed, dx, dy),cv2.COLOR_GRAY2RGB)),
-			'Sobel': SpellBase.to_kivy_texture(cv2.cvtColor(cv2.Sobel(smoothed, cv2.CV_8U, dx, dy, ksize=kernel_size),cv2.COLOR_GRAY2RGB)),
-			'Canny': SpellBase.to_kivy_texture(cv2.cvtColor(cv2.Canny(smoothed,canny_min, canny_max),cv2.COLOR_GRAY2RGB)),
-			'Laplacian': SpellBase.to_kivy_texture(cv2.cvtColor(cv2.Laplacian(smoothed, cv2.CV_8U),cv2.COLOR_GRAY2RGB)),
-			'Prewitt 2': SpellBase.to_kivy_texture(cv2.GaussianBlur(cv_image,(kernel_size,kernel_size),0)),
+		edge = {
+			'Prewitt': self.prewitt(smoothed, dx, dy),
+			'Sobel': np.uint8(cv2.Sobel(smoothed, cv2.CV_8U, dx, dy, ksize=kernel_size) > 10) * 255,
+			'Canny': cv2.Canny(smoothed,canny_min, canny_max),
+			'Laplacian': np.uint8(cv2.Laplacian(smoothed, cv2.CV_8U) > 10) * 255,
+			'Prewitt 2': gray,
 		}[mode]
+
+		return SpellBase.to_kivy_texture(cv2.cvtColor(edge, cv2.COLOR_GRAY2RGB))
 
 	def prewitt(self, gray_image, dx, dy):
 		# Construct the mask
